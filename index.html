@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Add icon library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="main.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  <script>
+    let activeId = '';
+    $(document).ready(function(){
+      var table_data = $('.student-data tbody')
+      var data_append = '';
+       // global state
+      if ($('.hidden').children().length > 0) {
+        $.each($('.data-student'), function(i){
+          var id = $(this).children().eq(0).text();
+          var Name = $(this).children().eq(1).text();
+          var Age = $(this).children().eq(2).text();
+          var Sex = $(this).children().eq(3).text();
+          var Class = $(this).children().eq(4).text();
+          data_append += '<tr>'
+            + '<td>'+ id +'</td>'
+            + '<td>'+ Name +'</td>'
+            + '<td>'+ Age +'</td>'
+            + '<td>'+ Sex +'</td>'
+            + '<td>'+ Class +'</td>'
+            + '<td>'
+            + '<button id="button" type="button" class="button button5" onclick="viewSomething(' + id + ')" data-toggle="modal" data-target="#viewModal">View</button>'
+            + '<button type="button" class="button2 button5" onclick="editSomething(' + id + ')" data-toggle="modal" data-target="#exampleModal2">Edit</button>'
+            + '<button type="button" class="button3 button5" onclick="deleteSomething(' + id + ')">Delete</button>'
+            + '<button id="button" type="button" class="btn btn-info" onclick="sendingmailSomething(' + id + ')" data-toggle="modal" data-target="#form-email">Send Email</button>'
+            + '</td>'
+            + '<td><button class="btn btn-primary get-id-drive" onclick="uploadSomething(' + id + ')" data-toggle="modal" data-target="#form-upload"><i class="fa fa-upload"></i> Upload</button></td>'
+            + '<td><button class="btn btn-primary" action="/api/download" method="POST"><i class="fa fa-download"></i> Download</button></td>'
+            + '</tr>'
+        })
+        table_data.append(data_append)
+      }
+    })
+
+    function inputFile() {
+      var name = document.getElementById('fileUpload');
+      if (name != undefined && name != '') {
+        $('#name-file').val(name.files.item(0).name);
+      }
+    }
+
+    function getFile(filePath) {
+      return filePath.substr(filePath.lastIndexOf('\\') + 1).split('.')[0];
+    }
+
+    function getoutput() {
+      outputfile.value = getFile(inputfile.value);
+      extension.value = inputfile.value.split('.')[1];
+    }
+
+    function uploadSomething(id) {
+      activeId = id;
+    }
+
+    function deleteSomething(id) {
+      fetch('/api/deleteModelName/' + id, { method: 'POST'})
+      .then(function(response) {
+        window.location.href = '/'
+        // Do stuff with the response
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      });
+    }
+
+    function download_file(id) {
+      fetch('/api/download/' + id, { method: 'POST'})
+      .then(function(response) {
+        window.location.href = '/'
+        // Do stuff with the response
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      });
+    }
+
+    function editSomething(id) {
+      fetch('/api/editModelName/' + id, { method: 'GET'})
+      .then(function(response) {
+          return response.json()
+        // Do stuff with the response
+      }).then(function(data){
+        console.log()
+        $('.edit-id').val(data[0]);
+        $('.edit-name').val(data[1]);
+        $('.edit-age').val(data[2]);
+        $('.edit-sex').val(data[3]);
+        $('.edit-class').val(data[4]);
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      });
+    }
+
+    function viewSomething(id) {
+      fetch('/api/viewModelName/' + id, { method: 'POST'})
+      .then(function(response) {
+          return response.json()
+        // Do stuff with the response
+      }).then(function(data){
+        console.log()
+        $('.view-id').val(data[0]);
+        $('.view-name').val(data[1]);
+        $('.view-age').val(data[2]);
+        $('.view-sex').val(data[3]);
+        $('.view-class').val(data[4]);
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      });
+    }
+
+    $(document).ready(function(){
+      $("#button").click(function(){
+        fetch('/')
+        .then(function(response) {
+          console.log(response)
+          // Do stuff with the response
+        })
+        .catch(function(error) {
+          console.log('Looks like there was a problem: \n', error);
+        });
+      });
+    });
+    </script>
+<style>  
+  /* Darker background on mouse-over */
+  .btn:hover {
+    background-color: RoyalBlue;
+  }
+</style>
+<style>
+  .button {
+    background-color: #1787e2;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 6px 4px;
+    cursor: pointer;
+  }
+  .button2 {
+    background-color: #40ac1f;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 6px 4px;
+    cursor: pointer;
+  }
+  .button3 {
+    background-color: #df1620;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 6px 4px;
+    cursor: pointer;
+  }
+  .button4 {
+    background-color: #1787e2;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    text-align: right;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 36px 1px;
+    cursor: pointer;
+  }
+  .button5 {border-radius: 4px;}
+</style>
+
+</head>
+<body>
+  <div class="container">
+    <h2></h2>
+    <button id="button" type="button" class="button4 button5" data-toggle="modal" data-target="#exampleModal">Add</button>
+    <button id="button" type="button" class="btn btn-info" data-toggle="modal" data-target="#form-email">Send Email</button>
+    <table class="table table-bordered student-data">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Sex</th>
+          <th>Class</th>
+
+          <th>Actions</th>
+          <th>Upload</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+<section class="vh-100 gradient-custom"></section>
+  <div class="container mt-2">
+
+    <!-- Modal add-->
+    <div class="modal fade" id="exampleModal" 
+        tabindex="-1" 
+        aria-labelledby="exampleModalLabel" 
+        aria-hidden="true">
+          
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="exampleModalLabel">Add data:</h1>
+                    <div class="modal-body">
+                      <!-- Input field to accept user input -->
+                      <form method="POST" class="addForm" enctype="multipart/form-data" action='/api/add'>
+                        <div class="form-group">
+                          <label for="exampleInputid">ID</label>
+                          <input name="id" type="id" class="form-control" id="exampleInputid"  placeholder="id">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputName">Name</label>
+                          <input name="Name" type="Name" class="form-control" id="exampleInputName" aria-describedby="Help" placeholder="Name">
+                        </div>
+                        <div class="form-group" value = "demo1">
+                          <label for="exampleInputLastName">Age</label>
+                          <input name="Age" type="Age" class="form-control" id="exampleInputAge" placeholder="Age">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputGender">Sex</label>
+                          <select class="form-control" id="exampleInputSex" name="Sex">
+                            <option></option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputClass">Class</label>
+                          <input name="Class" type="Class" class="form-control" id="exampleInputClass" placeholder="Class">
+                        </div>
+                      </form>
+                    </div>  
+                </div>
+
+                <div class="modal-body">
+
+                    <!-- Data passed is displayed 
+                        in this part of the 
+                        modal body -->
+                    <h3 id="modal_body"></h3>
+                    <button type="button" class="btn btn-primary btn-lg save-data add-data" data-toggle="modal" data-target="#exampleModal" id="submit">Save</button>
+                    <button type="button" class="btn btn-danger btn-lg pull-right" data-toggle="modal" data-target="#exampleModal" id="submit">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal edit -->
+    <div class="modal fade edit" id="exampleModal2" 
+        tabindex="-1" 
+        aria-labelledby="exampleModalLabel" 
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="exampleModalLabel">Edit data:</h1>
+                    <div class="modal-body">
+                      <!-- Input field to accept user input -->
+                      <form method="POST" class="editForm" enctype="multipart/form-data" action='/api/edit'>
+                        <div class="form-group">
+                          <label for="exampleInputid2">ID</label>
+                          <input name="id" type="id" class="form-control edit-id" id="exampleInputid2" placeholder="id">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputName2">Name</label>
+                          <input name="Name" type="Name" class="form-control edit-name" id="exampleInputName2" placeholder="Name">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputAge2">Age</label>
+                          <input name="Age" type="Age" class="form-control edit-age" id="exampleInputAge2" placeholder="Age">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputSex2">Sex</label>
+                          <select class="form-control edit-sex" id="exampleInputSex2" name="Sex">
+                            <option></option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputClass2">Class</label>
+                          <input name="Class" type="Class" class="form-control edit-class" id="exampleInputClass2" placeholder="Class">
+                        </div>
+                      </form>
+                    </div>  
+                </div>
+
+                <div class="modal-body">
+
+                    <!-- Data passed is displayed 
+                        in this part of the 
+                        modal body -->
+                    <h3 id="modal_body"></h3>
+                    <button type="button" class="btn btn-primary btn-lg save-data edit-data" data-toggle="modal" data-target="#exampleModal2" id="submit2">Save</button>
+                    <button type="button" class="btn btn-danger btn-lg pull-right" data-toggle="modal" data-target="#exampleModal2" id="submit2">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal View -->
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title" id="exampleModalLabel">Information</h1>
+      </div>
+      <div class="modal-body">
+        <form   method="POST" class="viewForm" enctype="multipart/form-data" id="reused_form" action='/api/viewModelName'>
+          <label for="viewInputId">ID</label>
+            <input name="id" type="id" class="form-control view-id" id="viewInputId" placeholder="id">
+          <label for="viewInputName">Name</label>
+            <input name="Name" type="Name" class="form-control view-name" id="viewInputName" placeholder="Name">
+          <label for="viewInputAge">Age</label>
+            <input name="Age" type="Age" class="form-control view-age" id="viewInputAge" placeholder="Age">
+          <label for="viewInputSex">Sex</label>
+            <input name="Sex" type="Sex" class="form-control view-sex" id="viewInputSex" placeholder="Sex">
+          <label for="viewInputClass">Class</label>
+            <input name="Class" type="Class" class="form-control view-class" id="viewInputClass" placeholder="Class">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-lg pull-right view-data" data-toggle="modal" data-target="#viewModal" id="submit3">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Modal send email-->
+<div class="modal fade sendmail" id="form-email" 
+        tabindex="-1" 
+        aria-labelledby="exampleModalLabel" 
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="exampleModalLabel">Send email:</h1>
+                    <div class="modal-body">
+                      <!-- Input field to accept user input -->
+                      <form   method="POST" class="sendingmailForm" enctype="multipart/form-data" id="reused_form" action='/api/send_email'>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label for="example_input_sender_email">From:</label>
+                                <input type="email" class="form-control" id="example_input_sender_email" name="sender_email" placeholder="Email" required>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <label for="example_input_password">
+                                    Password:</label>
+                                <input type="password" class="form-control" id="example_input_password" name="password" placeholder="Password" required>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <label for="example_input_receiver_email">
+                                    To:</label>
+                                <input type="email" class="form-control" id="example_input_receiver_email" name="receiver_email" placeholder="Email" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label for="text">
+                                    Message:</label>
+                                <textarea class="form-control" type="textarea" name="message" id="example_imput_message" maxlength="6000" rows="7"></textarea>
+                            </div>
+                        </div>        
+            
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                              <button type="button" class="btn btn-lg btn-primary save-data send-email" data-toggle="modal" data-target="#form-email" id="submit4">Send</button>
+                              <button type="button" class="btn btn-danger pull-right btn-lg" data-toggle="modal" data-target="#form-email">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                    </div>  
+                </div>
+
+                <div class="modal-body">
+
+                  <div id="success_message" style="width:100%; height:100%; display:none; ">
+                    <h3>Posted your message successfully!</h3>
+                </div>
+                <div id="error_message"
+                        style="width:100%; height:100%; display:none; ">
+                            <h3>Error</h3>
+                            Sorry there was an error sending your form.
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal upload file-->
+<div class="modal fade sendmail" id="form-upload" 
+        tabindex="-1" 
+        aria-labelledby="exampleModalLabel" 
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="exampleModalLabel">Upload File Here: </h1>
+                    <div class="modal-body">
+                      <!-- Input field to accept user input -->
+                      <!-- <form class="uploadingfile" enctype="multipart/form-data" method="POST"> -->
+                        <input type="hidden" id="name-file"/>
+                        <p>File:<input type="file" id="fileUpload" multiple onchange="inputFile()"/></p>
+                        <button type="button"  id="upload-id" class="upload">Upload</button>
+                      <!-- </form> -->
+                    </div>  
+                </div>
+
+                <div class="modal-body">
+ 
+                  <div id="success_message" style="width:100%; height:100%; display:none; ">
+                    <h3>Posted your message successfully!</h3>
+                </div>
+                <div id="error_message"
+                        style="width:100%; height:100%; display:none; ">
+                            <h3>Error</h3>
+                            Sorry there was an error sending your form.
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(".save-data").click(function () {
+      var table_data = $('.save-data tbody')
+      var id = document.getElementById('exampleInputid').text;
+      table_data.append(id);
+      var Name = document.getElementById('exampleInputName').text;
+      table_data.append(Name);
+      var Age = document.getElementById('exampleInputAge').text;
+      table_data.append(Age);
+      var Sex = document.getElementById('exampleInputSex').text;
+      table_data.append(Sex)
+      var Class = document.getElementById('exampleInputClass').text;
+      table_data.append(Class);
+    });
+
+    $('.add-data').on('click', function(){
+      var loginForm = $('.addForm').serializeArray();
+      var loginFormObject = {};
+      $.each(loginForm, function(i, v) {
+          loginFormObject[v.name] = v.value; 
+      });
+      // debugger;
+      console.log(JSON.stringify(loginFormObject))
+      fetch('/api/add',{
+        method:"POST",
+        body: JSON.stringify(loginFormObject),
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json'
+        },
+      }).then(function(response) {
+        window.location.href = '/'
+        // Do stuff with the response
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      })
+    });
+
+    $(".save-data").click(function () {
+      var table_data = $('.save-data tbody')
+      var id = document.getElementById('exampleInputid2').text;
+      table_data.append(id);
+      var Name = document.getElementById('exampleInputName2').text;
+      table_data.append(Name);
+      var Age = document.getElementById('exampleInputAge2').text;
+      table_data.append(Age);
+      var Sex = document.getElementById('exampleInputSex2').text;
+      table_data.append(Sex)
+      var Class = document.getElementById('exampleInputClass2').text;
+      table_data.append(Class);
+    });
+
+    $('.edit-data').on('click', function(){
+      var loginForm = $('.editForm').serializeArray();
+      var loginFormObject = {};
+      $.each(loginForm, function(i, v) {
+          loginFormObject[v.name] = v.value;
+          
+      });
+      // debugger;
+      fetch('/api/edit',{
+        method:"POST",
+        body: JSON.stringify(loginFormObject),
+        headers: {
+          'Accept': 'application2/json',
+          'Content-type': 'application2/json'
+        },
+      }).then(function(response) {
+        console.log(response);
+        window.location.href = '/'
+        // Do stuff with the response
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      })
+    });
+
+    $('.save-data').click(function() {
+      var table_data = $('.save-data tbody')
+      var sender_email = document.getElementById('example_input_sender_email').text;
+      table_data.append(sender_email);
+      var password = document.getElementById('example_input_password').text;
+      table_data.append(password);
+      var receiver_email = document.getElementById('example_input_receiver_email').text;
+      table_data.append(receiver_email);
+      var message = document.getElementById('example_imput_message').text;
+      table_data.append(message)
+    });
+
+    $('.send-email').on('click', function(){
+      var loginForm = $('.sendingmailForm').serializeArray();
+      var loginFormObject = {};
+      $.each(loginForm, function(i, v) {
+          loginFormObject[v.name] = v.value;
+      });
+      // debugger;
+      console.log(JSON.stringify(loginFormObject))
+      fetch('/api/send_email', {
+        method:"POST",
+        body: JSON.stringify(loginFormObject),
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json'
+        },
+      }).then(function(response) {
+        console.log(response);
+        window.location.href = '/'
+        // Do stuff with the response
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      })
+    });  
+
+    $('.save-data').click(function() {
+      var table_data = $('.save-data tbody')
+      var id = document.getElementById('viewInputId').text;
+      table_data.append(id);
+      var name = document.getElementById('viewInputName').text;
+      table_data.append(name);
+      var age = document.getElementById('viewInputAge').text;
+      table_data.append(age);
+      var sex = document.getElementById('viewInputSex').text;
+      table_data.append(sex)
+      var classes = document.getElementById('viewInputClass').text;
+      table_data.append(classes)
+      console.log(table_data)
+    });
+
+    $('.view-data').on('click', function(){
+      var loginForm = $('.viewForm').serializeArray();
+      var loginFormObject = {};
+      $.each(loginForm, function(i, v) {
+          loginFormObject[v.name] = v.value;
+      });
+      // debugger;
+      console.log(JSON.stringify(loginForm ))
+      fetch('/api/viewModelName', {
+        method:"POST",
+        body: JSON.stringify(loginForm),
+        headers: {
+          'Accept': 'application3/json',
+          'Content-type': 'application3/json'
+        },
+      }).then(function(response) {
+        console.log(response);
+        window.location.href = '/'
+        // Do stuff with the response
+      })
+      .catch(function(error) {    
+        console.log('Looks like there was a problem: \n', error);
+      })
+    });  
+
+    /*
+    $('input[type="file"]').change(function(e) {
+      var fileName = e.target.files[0].name;
+    // Inside find search element where the name should display (by Id Or Class)
+    });*/
+
+
+
+    
+
+    // $('.get-id-drive').on('click', function(){
+    //   // var loginForm = $('.uploadingfile').serializeArray();
+    //   // var loginFormObject = {};
+    //   // $.each(loginForm, function(i, v) {
+    //   //     loginFormObject[v.name] = v.value;
+    //   // });
+    //   // debugger;
+    //   // console.log(JSON.stringify(loginFormObject))
+    //   // fetch('/api/upload', {
+    //   //   method:"POST",
+    //   //   body: JSON.stringify(loginFormObject),
+    //   //   headers: {
+    //   //     'Accept': 'application/json',
+    //   //     'Content-type': 'application/json'
+    //   //   },
+    //   // }).then(function(response) {
+    //   //   console.log(response);
+    //   //   // window.location.href = '/'
+    //   //   // Do stuff with the response
+    //   // })
+    //   // .catch(function(error) {    
+    //   //   console.log('Looks like there was a problem: \n', error);
+    //   // })
+    // })
+
+</script>
+
+<script>
+    $(document).on('click', '.upload', function() {
+      // e.preventDefault();
+      // e.stopImmediatePropagation()
+      // alert(1);
+      var table_data = $('.upload tbody')
+      table_data.append(activeId)
+      var name = $('#name-file').val() 
+      table_data.append(name)
+      console.log(table_data); 
+      // console.log( name);
+      // return false;
+      // var table_data = $('#fileUpload tbody')
+      // var id = document.getElementById('fileUpload').text;
+      // table_data.append(id);
+      // var name = uploadSomething();
+      // table_data.append(name)
+      // console.log(table_data)
+    });
+</script>
+</section>
+</body>
+</html>
+
+

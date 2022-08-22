@@ -1,0 +1,57 @@
+/* <style>   */
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}
+/* </style>
+<style> */
+.button {
+  background-color: #1787e2;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 6px 4px;
+  cursor: pointer;
+}
+.button2 {
+  background-color: #40ac1f;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 6px 4px;
+  cursor: pointer;
+}
+.button3 {
+  background-color: #df1620;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 6px 4px;
+  cursor: pointer;
+}
+.button4 {
+  background-color: #1787e2;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  text-align: right;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 36px 1px;
+  cursor: pointer;
+}
+.button5 {border-radius: 4px;}
+/* </style> */

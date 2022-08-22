@@ -1,0 +1,66 @@
+  def do_POST(self):
+        if self.path == '/api/deleteModelName':
+            db = Server.database()
+            mycursor = db.cursor()
+            sql = "DELETE FROM Employee WHERE ID = 3"
+            mycursor.execute(sql)
+            db.commit()
+            db.close()
+            self.send_response(200)
+            self.end_headers()
+            
+        # print(self.path)
+        print(self.path[-1])
+        return
+
+        if self.path.find('/api/editModelName') != -1:
+                file = '/index.html'
+                m = ''.join(re.findall(r'\d', self.path))
+                db = Server.database()
+                mycursor = db.cursor()
+                sql = f"SELECT * FROM Information WHERE ID = {m}" 
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                result1=result[0]
+                result_final = json.dumps(result1)
+                # print(result_final)
+                db.commit()
+                db.close()
+                # print(result_final)
+                # split_path = os.path.splitext(file)
+                # request_extension = split_path[1]
+                # if request_extension != ".py":
+                f = open(file[1:]).read()
+                f += '<div class="data-edit-student" attr-id="2">'
+                f += f'<div id=number>{result1[0]}</div>'
+                f += f'<div id=name>{result1[1]}</div>'
+                f += f'<div id=age>{result1[2]}</div>'
+                f += f'<div id=sex>{result1[3]}</div>'
+                f += f'<div id=salary>{result1[4]}</div>'
+                f += '</div>'
+
+                self.send_response(201)
+                self.end_headers()
+                self.wfile.write(bytes(f,"utf-8"))
+
+
+
+
+
+
+        # if self.path.find('/api/editModelName') != -1:
+        #     self._set_headers()
+        #     m = ''.join(re.findall(r'\d', self.path))
+        #     db = Server.database()
+        #     mycursor = db.cursor()
+        #     sql = f"SELECT * FROM Information WHERE ID = {m}" 
+        #     mycursor.execute(sql)
+        #     result = mycursor.fetchall()
+        #     result1=result[0]
+        #     result_final = json.dumps(result1)
+        #     print(result_final)
+        #     db.commit()
+        #     db.close()
+        #     # self.send_response(200)
+        #     # self.end_headers()
+        #     self.wfile.write(json.dumps({'hello': 'world', 'received': 'ok'}))
